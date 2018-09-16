@@ -1,0 +1,33 @@
+{
+  "name": "etoken-cl-nodejs-library",
+  "version": "1.0.0",
+  "description": "A eToken Library for eletronic Token signing for CL process",
+  "private": true,
+  "directories": {
+    "lib": "lib",
+    "src": "src"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack"
+  },
+  "main": "./bundle/etoken.bundle.js",
+  "author": "acalvoa",
+  "license": "MIT",
+  "dependencies": {
+    "@types/asn1js": "0.0.1",
+    "asn1js": "^2.0.21",
+    "pkcs11js": "^1.0.16"
+  },
+  "devDependencies": {
+    "@types/node": "^10.9.4",
+    "electron-builder": "^20.28.4",
+    "ts-loader": "^5.1.1",
+    "tslint": "^5.11.0",
+    "tslint-loader": "^3.6.0",
+    "typescript": "^3.0.3",
+    "webpack": "^4.19.0",
+    "webpack-cli": "^3.1.0",
+    "webpack-node-externals": "^1.7.2"
+  }
+}

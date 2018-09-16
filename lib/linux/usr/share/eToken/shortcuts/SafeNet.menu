@@ -1,0 +1,15 @@
+<!DOCTYPE Menu PUBLIC "-//freedesktop//DTD Menu 1.0//EN" "http://www.freedesktop.org/standards/menu-spec/1.0/menu.dtd">
+<Menu>
+  <Name>Applications</Name>
+  <Menu>
+    <Name>SafeNet</Name>
+    <Directory>SafeNet.directory</Directory>
+    <Menu>
+      <Name>SafeNet Authentication Client</Name>
+      <Directory>SafeNet-Authentication-Client</Directory>
+      <Include>
+        <Category>SafeNet-Authentication-Client</Category>
+      </Include>
+    </Menu>
+  </Menu>
+</Menu>
