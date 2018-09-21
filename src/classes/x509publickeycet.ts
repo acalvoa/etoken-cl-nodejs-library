@@ -84,5 +84,3 @@ export class X509PublicKeyCert {
 
     
 }
-
-module.exports = X509PublicKeyCert;

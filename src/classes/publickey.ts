@@ -122,5 +122,3 @@ export class PublicKey {
         };
     }
 }
-
-module.exports = PublicKey;

@@ -140,5 +140,3 @@ export class PrivateKey {
         };
     }
 }
-
-module.exports = PrivateKey;
