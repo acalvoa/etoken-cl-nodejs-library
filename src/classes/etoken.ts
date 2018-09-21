@@ -14,6 +14,7 @@ export class Etoken {
     private LIB_WIN32_PATH: string = '';
     private LIB_WIN64_PATH: string = '';
     private LIB_LINUX_PATH: string = '/usr/lib/libeToken.so';
+    //private LIB_LINUX_PATH: string = '/usr/lib/libsoftokn3.so';
     private LIB_IOS_PATH: string = '';
 
     constructor() {

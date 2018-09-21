@@ -11,10 +11,18 @@ module.exports = {
     },
     output: {
         path: path.join(__dirname, 'bundle'),
-        filename: 'etoken.bundle.js'
+        filename: 'etoken.bundle.js',
+        library: 'etoken',
+        libraryTarget: 'umd',
+        umdNamedDefine: true
     },
     module: {
         rules: [
+            {
+                test: /(\.jsx|\.js)$/,
+                loader: 'babel-loader',
+                exclude: /(node_modules|bower_components)/
+            },
             {
                 test: /\.ts$/,
                 loader: 'ts-loader'
