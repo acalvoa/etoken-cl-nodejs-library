@@ -10,6 +10,7 @@ export class Etoken {
     private tokensConnected: number[];
     private tokenInUse: any;
     private session: any;
+    private finalized: boolean;
 
     private LIB_WIN32_PATH: string = '';
     private LIB_WIN64_PATH: string = '';
@@ -20,6 +21,7 @@ export class Etoken {
     constructor() {
         this.PKCS11 = new pkcs11js.PKCS11();
         this.tokenReady = false;
+        this.finalized = false;
         this.initializeOS();
         this.searchTokensConnected();
     }
@@ -196,12 +198,33 @@ export class Etoken {
         }
     }
 
+    public loginPersistent(token: number, password: string) {
+        try {
+            this.initSession(token);
+            if (!this.session) throw new Error('The token session is not already yet');
+            this.PKCS11.C_Login(this.session, 1, password);
+            this.tokenInUse = this.getTokenConnectedInfo(token);
+            return true;
+        } catch(e) {
+            return false;
+        }
+    }
+    
     public verifyTokenInUse() {
         try {
             if (!this.tokenInUse) throw new Error('No are a token in use');
             return this.tokenInUse.verifytoken(this);
         } catch(e) {
             this.finalize();
+            return false;
+        }
+    }
+
+    public verifyTokenInUsePersistent(): boolean {
+        try {
+            if (!this.tokenInUse) throw new Error('No are a token in use');
+            return this.tokenInUse.verifytoken(this);
+        } catch(e) {
             return false;
         }
     }
@@ -224,18 +247,19 @@ export class Etoken {
         return null;
     }
 
-    public finalize() {
+    public finalize(): boolean {
         try {
             this.logout();
             this.closeSession();
             this.PKCS11.C_Finalize();
+            this.finalized = true;
             return true;
         } catch(e) {
             return false;
         }
     }
 
-    public closeSession() {
+    public closeSession(): boolean {
         try {
             if (this.session) this.PKCS11.C_CloseSession(this.session);
             return true;
@@ -244,13 +268,17 @@ export class Etoken {
         }
     }
 
-    public logout() {
+    public logout(): boolean {
         try {
             if (this.session) this.PKCS11.C_Logout(this.session);
             return true;
         } catch(e) {
             return false;
         }
+    }
+
+    public isfinalized(): boolean {
+        return this.finalized;
     }
 }
 
