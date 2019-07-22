@@ -2,7 +2,7 @@ import * as pkcs11js from 'pkcs11js';
 import * as PrivateKey from './privatekey';
 import * as PublicKey  from './publickey';
 import * as SignAlgorithm  from '../interfaces/signalgorithm';
-import * as X509PublicKeyCert from './x509publickeycet';
+import X509PublicKeyCert from './x509publickeycet';
 import { SignData } from '../interfaces/signdata';
 
 export class Signer {
@@ -12,14 +12,14 @@ export class Signer {
     private algorithm: SignAlgorithm.SignAlgorithm;
     private data: Buffer;
     private pkcs11: pkcs11js.PKCS11;
-    private session: any;
+    private session: Buffer;
 
     // Signature Objects
-    private signature;
-    private x509Cert;
+    private signature: Buffer;
+    private x509Cert: X509PublicKeyCert;
 
 
-    constructor(algorithm: SignAlgorithm.SignAlgorithm , pkcs11: pkcs11js.PKCS11, session: any) {
+    constructor(algorithm: SignAlgorithm.SignAlgorithm , pkcs11: pkcs11js.PKCS11, session: Buffer) {
         this.algorithm = algorithm;
         this.privateKey = new PrivateKey.PrivateKey(pkcs11, true);
         this.publicKey = new PublicKey.PublicKey(pkcs11, true);
@@ -45,14 +45,14 @@ export class Signer {
         this.generatePairKeys();
         this.pkcs11.C_SignInit(this.session, { mechanism: this.algorithm.id, parameter: null }, this.keys.privateKey);
         this.pkcs11.C_SignUpdate(this.session, data);
-        this.signature = this.pkcs11.C_SignFinal(this.session, new Buffer(this.algorithm.outputBits));
+        this.signature = this.pkcs11.C_SignFinal(this.session, Buffer.alloc(this.algorithm.outputBits));
         this.generateX509Certificate();
         return this.getSignature();
     }
 
     private base64_decode(base64str) {
         // create buffer object from base64 encoded string
-        var bits = new Buffer(base64str, 'base64');
+        var bits = Buffer.from(base64str, 'base64');
         // return the buffer
         return bits;
     }
@@ -66,13 +66,13 @@ export class Signer {
         }
     }
 
-    private generateX509Certificate() {
-        const x509Cert = new X509PublicKeyCert.X509PublicKeyCert(this.pkcs11);
+    private generateX509Certificate(): void {
+        const x509Cert = new X509PublicKeyCert(this.pkcs11);
         x509Cert.getCertificate(this.session);
         this.x509Cert = x509Cert;
     }
 
-    public getx509Certificate(): X509PublicKeyCert.X509PublicKeyCert {
+    public getx509Certificate(): X509PublicKeyCert {
         try {
             if(!this.x509Cert) throw new Error('First you need sign a data to generate a x509 certificate.');
             return this.x509Cert;

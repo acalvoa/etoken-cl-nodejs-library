@@ -1,4 +1,6 @@
 import { Etoken } from './etoken';
+import { TokenInfo } from 'pkcs11js';
+import X509PublicKeyCert from './x509publickeycet';
 
 export class Token {
     public slotId: number;
@@ -22,27 +24,29 @@ export class Token {
     public totalPrivateMemory: number;
     public freePrivateMemory: number;
 
-    constructor(slotId: number, token_info: any, slot: Buffer = null) {
+    public x509Cert: X509PublicKeyCert;
+
+    constructor(slotId: number, tokenInfo: TokenInfo, slot: Buffer = null) {
         this.slotId = slotId;
         this.slot = slot;
-        this.label = token_info.label.trim();
-        this.manufacturerID = token_info.manufacturerID.trim();
-        this.model = token_info.model.trim();
-        this.serialNumber = token_info.serialNumber.trim();
-        this.flags = token_info.flags;
-        this.maxSessionCount = token_info.maxSessionCount;
-        this.sessionCount = token_info.sessionCount;
-        this.maxRwSessionCount = token_info.maxRwSessionCount;
-        this.rwSessionCount = token_info.rwSessionCount;
-        this.maxPinLen = token_info.maxPinLen;
-        this.minPinLen = token_info.minPinLen;
-        this.hardwareVersion = token_info.hardwareVersion;
-        this.firmwareVersion = token_info.firmwareVersion;
-        this.utcTime = token_info.utcTime.trim();
-        this.totalPublicMemory = token_info.totalPublicMemory;
-        this.freePublicMemory = token_info.freePublicMemory;
-        this.totalPrivateMemory = token_info.totalPrivateMemory;
-        this.freePrivateMemory = token_info.freePrivateMemory
+        this.label = tokenInfo.label.trim();
+        this.manufacturerID = tokenInfo.manufacturerID.trim();
+        this.model = tokenInfo.model.trim();
+        this.serialNumber = tokenInfo.serialNumber.trim();
+        this.flags = tokenInfo.flags;
+        this.maxSessionCount = tokenInfo.maxSessionCount;
+        this.sessionCount = tokenInfo.sessionCount;
+        this.maxRwSessionCount = tokenInfo.maxRwSessionCount;
+        this.rwSessionCount = tokenInfo.rwSessionCount;
+        this.maxPinLen = tokenInfo.maxPinLen;
+        this.minPinLen = tokenInfo.minPinLen;
+        this.hardwareVersion = tokenInfo.hardwareVersion;
+        this.firmwareVersion = tokenInfo.firmwareVersion;
+        this.utcTime = tokenInfo.utcTime.trim();
+        this.totalPublicMemory = tokenInfo.totalPublicMemory;
+        this.freePublicMemory = tokenInfo.freePublicMemory;
+        this.totalPrivateMemory = tokenInfo.totalPrivateMemory;
+        this.freePrivateMemory = tokenInfo.freePrivateMemory;
     }
     
     public verifytoken(etoken: Etoken) {
@@ -59,6 +63,21 @@ export class Token {
             }
         }
         return false;
+    }
+
+    public getResumen() {
+        return {
+            slotId: this.slotId,
+            slot: this.slot,
+            label: this.label,
+            manufacturerID: this.manufacturerID,
+            model: this.model,
+            serialNumber: this.serialNumber,
+            totalPublicMemory: this.totalPublicMemory,
+            freePublicMemory: this.totalPublicMemory,
+            totalPrivateMemory: this.totalPublicMemory,
+            freePrivateMemory: this.totalPublicMemory
+        };
     }
 
 }
