@@ -31,7 +31,7 @@ export class PublicKey {
         this.CKA_ENCRYPT = !signOnly;
         this.CKA_WRAP = !signOnly;
         this.CKA_ID = "PUB"+Math.floor(Math.random()*200) + new Date().getTime().toString(); // Buffer containing the bytes "test01"
-        this.CKA_PUBLIC_EXPONENT = new Buffer([1, 0, 1]);
+        this.CKA_PUBLIC_EXPONENT = Buffer.from([1, 0, 1]);
         this.CKA_LABEL = "CGR-Signer Public Key";
     }
 
@@ -46,7 +46,7 @@ export class PublicKey {
             { type: pkcs11js.CKA_WRAP, value: this.CKA_WRAP },
             { type: pkcs11js.CKA_VERIFY_RECOVER, value: this.CKA_VERIFY_RECOVER },
             { type: pkcs11js.CKA_VERIFY, value: this.CKA_VERIFY },
-            { type: pkcs11js.CKA_ID, value: new Buffer(this.CKA_ID.split('').map( x => x.charCodeAt(0) )) },
+            { type: pkcs11js.CKA_ID, value: Buffer.from(this.CKA_ID.split('').map( x => x.charCodeAt(0) )) },
             { type: pkcs11js.CKA_LABEL, value: this.CKA_LABEL },
             { type: pkcs11js.CKA_PUBLIC_EXPONENT, value: this.CKA_PUBLIC_EXPONENT },
         ];

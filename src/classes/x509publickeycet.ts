@@ -2,31 +2,34 @@ import * as ASN1 from './asn1/asn1';
 import * as pkcs11js from 'pkcs11js';
 import { Der } from './der';
 
-export class X509PublicKeyCert {
-    public CKA_SUBJECT;
-    public CKA_ID;
-    public CKA_ISSUER;
-    public CKA_SERIAL_NUMBER;
-    public CKA_VALUE;
-    public CKA_URL;
-    public CKA_HASH_OF_SUBJECT_PUBLIC_KEY;
-    public CKA_HASH_OF_ISSUER_PUBLIC_KEY;
-    public CKA_JAVA_MIDP_SECURITY_DOMAIN;
-    public CKA_NAME_HASH_ALGORITHM;
-    public CKA_CERTIFICATE_TYPE;
+export default class X509PublicKeyCert {
+    public CKA_SUBJECT: number | boolean | string | Buffer;
+    public CKA_ID: number | boolean | string | Buffer;
+    public CKA_ISSUER: number | boolean | string | Buffer;
+    public CKA_SERIAL_NUMBER: number | boolean | string | Buffer;
+    public CKA_VALUE: number | boolean | string | Buffer;
+    public CKA_URL: number | boolean | string | Buffer;
+    public CKA_HASH_OF_SUBJECT_PUBLIC_KEY: number | boolean | string | Buffer;
+    public CKA_HASH_OF_ISSUER_PUBLIC_KEY: number | boolean | string | Buffer;
+    public CKA_JAVA_MIDP_SECURITY_DOMAIN: number | boolean | string | Buffer;
+    public CKA_NAME_HASH_ALGORITHM: number | boolean | string | Buffer;
+    public CKA_CERTIFICATE_TYPE: number | boolean | string | Buffer;
+    public CKA_START_DATE: number | boolean | string | Buffer;
+    public CKA_END_DATE: number | boolean | string | Buffer;
 
-    public PKCS11;
+    public PKCS11: pkcs11js.PKCS11;
 
-    constructor(pkcs11) {
+    constructor(pkcs11: pkcs11js.PKCS11) {
         this.PKCS11 = pkcs11;
     }
 
-    public getCertificate(session) {
+    public getCertificate(session: Buffer) {
         // Obtain the certificate object from the eToken
         this.PKCS11.C_FindObjectsInit(session, [
             { type: pkcs11js.CKA_CLASS, value: pkcs11js.CKO_CERTIFICATE }
         ]);
-        var hObject = this.PKCS11.C_FindObjects(session);
+
+        var hObject: Buffer = this.PKCS11.C_FindObjects(session);
         
         while (hObject) {
             // Define the attrs to obtain from the eToken
@@ -41,6 +44,8 @@ export class X509PublicKeyCert {
                 { type: pkcs11js.CKA_HASH_OF_ISSUER_PUBLIC_KEY },
                 { type: pkcs11js.CKA_JAVA_MIDP_SECURITY_DOMAIN },
                 { type: pkcs11js.CKA_CERTIFICATE_TYPE },
+                { type: pkcs11js.CKA_START_DATE },
+                { type: pkcs11js.CKA_END_DATE }
                 // { type: pkcs11js.CKA_NAME_HASH_ALGORITHM }  // Not suported
             ]);
 
@@ -55,6 +60,8 @@ export class X509PublicKeyCert {
             this.CKA_HASH_OF_ISSUER_PUBLIC_KEY = attrs[7].value;
             this.CKA_JAVA_MIDP_SECURITY_DOMAIN = attrs[8].value;
             this.CKA_CERTIFICATE_TYPE = attrs[9].value;
+            this.CKA_START_DATE = attrs[10].value;
+            this.CKA_END_DATE = attrs[11].value;
             // this.CKA_NAME_HASH_ALGORITHM = attrs[].value;  // Not suported
 
             // Iterate the next object found if exists
@@ -65,12 +72,11 @@ export class X509PublicKeyCert {
     }
 
     public getBase64Certificate() {
-        return this.CKA_VALUE.toString('base64');
+        return (this.CKA_VALUE as Buffer).toString('base64');
     }
 
     public getSubject() {
-        const der = ASN1.decode(this.CKA_SUBJECT);
-        return this.CKA_SUBJECT.toString('base64');
+        return (this.CKA_SUBJECT as Buffer).toString('base64');
     }
 
     public getFormatSubject() {
@@ -80,7 +86,5 @@ export class X509PublicKeyCert {
             formatedProperties.push(properties[i]['min_attr'] + '=' + properties[i]['value']);
         }
         return formatedProperties.join(", ");
-    }
-
-    
+    }   
 }
