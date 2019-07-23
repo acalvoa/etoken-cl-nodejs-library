@@ -1,2 +1,2 @@
 # etoken-cl-nodejs-library
-A eToken Library for eletronic Token signing for CL process
+A eToken library for advanced token signing in CL process
